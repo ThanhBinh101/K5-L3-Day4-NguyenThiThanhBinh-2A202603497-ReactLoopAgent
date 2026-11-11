@@ -1,0 +1,43 @@
+{
+  "scope": "Single-case E2 comparison, not full CP6 eval",
+  "before_report": "cp4_eval_before_quota.json",
+  "after_report": "cp5_E2_debug.json",
+  "recorded_config_equal": true,
+  "config": {
+    "provider": "openrouter",
+    "model": "openrouter/free",
+    "judge_provider": "openrouter",
+    "judge_model": "openrouter/free",
+    "max_steps": 8,
+    "dataset": "core"
+  },
+  "metrics": [
+    {
+      "version": "before",
+      "score": 89,
+      "model_calls": 3,
+      "tool_calls": 2,
+      "agent_tokens": 4425,
+      "judge_tokens": 4071,
+      "agent_cost": 0,
+      "judge_cost": 0
+    },
+    {
+      "version": "after",
+      "score": 95,
+      "model_calls": 3,
+      "tool_calls": 2,
+      "agent_tokens": 8214,
+      "judge_tokens": 2356,
+      "agent_cost": 0,
+      "judge_cost": 0
+    }
+  ],
+  "score_delta": 6,
+  "total_token_delta": 2074,
+  "limits": [
+    "Only one run per version",
+    "Free router may select different underlying models",
+    "Baseline full-suite report remains incomplete"
+  ]
+}

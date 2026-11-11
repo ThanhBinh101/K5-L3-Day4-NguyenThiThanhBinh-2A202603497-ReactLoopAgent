@@ -1,0 +1,248 @@
+{
+  "summary": {
+    "total_cases": 1,
+    "scored_cases": 1,
+    "unscored_cases": 0,
+    "score_0_100": 95.0,
+    "partial_mean_0_100": null
+  },
+  "config": {
+    "provider": "openrouter",
+    "model": "openrouter/free",
+    "judge_provider": "openrouter",
+    "judge_model": "openrouter/free",
+    "max_steps": 8,
+    "dataset": "core"
+  },
+  "cases": [
+    {
+      "id": "E2",
+      "question": "Cloudflare cache purge có incident nào liên quan không? Một website CLB không thuộc FedRAMP có chắc bị ảnh hưởng không?",
+      "expected": "Incident wp49bp8bqo6c identified; update ban đầu nói non-FedRAMP không bị ảnh hưởng bởi incident này. Không khẳng định nguyên nhân lỗi website.",
+      "scenario": "normal",
+      "provider": "openrouter",
+      "model": "openrouter/free",
+      "judge_provider": "openrouter",
+      "judge_model": "openrouter/free",
+      "result": {
+        "status": "completed",
+        "answer": "**Có vụ incidente liên quan đến Cloudflare cache purge hiện tại.**\n\n### 1. Kết quả kiểm tra trạng thái (theo thời điểm `captured_at: 2026-11-09T03:50:47+00:00`):\n- **Trạng thái tổng thể:** *Major* – “Partial System Outage”.\n- **Thành phần CDN Cache Purge:** **degraded_performance** (hiệu suất giảm sút).\n- **3 incident gần đây (trong 50 incident mới nhất):**\n  1. **wp49bp8bqo6c** – “Fedramp Customers have Delayed Purges” (status: *identified*)  \n  2. `5tlm9r9j9rpo` – “Cache purge delays in Qingdao Shandong, China” (status: *resolved*)  \n  3. `8s6pn9rvof3l` – “Cache Purging Delays Affecting Requests Routed Through EEUR” (status: *resolved*)\n\n### 2. Chi tiết incident có liên quan nhất:\n- **ID:** `wp49bp8bqo6c` – “Fedramp Customers have Delayed Purges”.  \n- **Thời gian tạo/cập nhật:** Tạo lúc `2026-11-06T17:47:15Z`, cập nhật lúc `2026-11-06T17:59:13Z`.  \n- **Nội dung cập nhật quan trọng:**  \n  > “Cloudflare has identified a bug with our purge pipeline impacting fedramp customers. **Stale content may be served until expired.** **Non-fedramp customers are not impacted.**”  \n  → **Trực tiếp khẳng định:** Những khách hàng **không thuộc FedRAMP** (như website CLB của bạn) **không bị ảnh hưởng** bởi vụ incident này.\n\n### 3. Hướng dẫn về website CLB không thuộc FedRAMP:\n- Theo dữ liệu hiện có, **không có bằng chứng** cho thấy website CLB không thuộc FedRAMP bị ảnh hưởng bởi vụ incident cache purge đang diễn ra.  \n- Vụ incident ghi nhận rõ rằng **khách hàng non‑FedRAMP không bị ảnh hưởng**.\n\n### 4. Giới hạn của dữ liệu:\n- Công cụ chỉ quét **50 incident gần nhất**; có thể những incident cũ hơn hoặc buiten range không được thể hiện.  \n- Trạng thái tổng thể “degraded_performance” cho CDN Cache Purge tồn tại, nhưng chỉ incident FedRAMP có cập nhật cụ thể khẳng định **non‑FedRAMP không bị ảnh hưởng**.  \n- Không thể phủ nhận hoàn toàn các nguyên nhân khác (phía khách, cấu hình regional…) gây tác động, nhưng trên cơ sở dữ liệu có sẵn, **không có dấu hiệu** website CLB không thuộc FedRAMP bị ảnh hưởng do vụ incident này.\n\n### 5. Nguồn tham chiếu chính xác:\n- Trang tổng quan: <https://www.cloudflarestatus.com>  \n- Chi tiết incident FedRAMP: <https://www.cloudflarestatus.com/incidents/wp49bp8bqo6c>\n\n**Tóm lại:** Vụ incident cache purge đang diễn ra tác động chủ yếu đến khách hàng **FedRAMP**, và Cloudflare đã khẳng định **khách hàng non‑FedRAMP (như website CLB của bạn) không bị ảnh hưởng**. Tuy nhiên, do hạn chế dữ liệu (50 incident gần nhất) và trạng thái hệ thống chung “partial outage”, bạn nên theo dõi thêm nếu có dấu hiệu lỗi cụ thể trên website của bạn.",
+        "trace": [
+          {
+            "event": "model",
+            "step": 1,
+            "finish": "tool_calls"
+          },
+          {
+            "event": "tool",
+            "step": 1,
+            "name": "get_status",
+            "arguments": {
+              "component": "cache purge",
+              "provider": "cloudflare"
+            },
+            "result": {
+              "provider": "cloudflare",
+              "captured_at": "2026-11-09T03:50:47.638054+00:00",
+              "overall": {
+                "indicator": "major",
+                "description": "Partial System Outage"
+              },
+              "components": [
+                {
+                  "name": "CDN Cache Purge",
+                  "status": "degraded_performance"
+                }
+              ],
+              "incidents": [
+                {
+                  "id": "wp49bp8bqo6c",
+                  "name": "Fedramp Customers have Delayed Purges",
+                  "status": "identified",
+                  "updated_at": "2026-11-06T17:59:13.680Z"
+                },
+                {
+                  "id": "5tlm9r9j9rpo",
+                  "name": "Cache purge delays in Qingdao Shandong, China",
+                  "status": "resolved",
+                  "updated_at": "2026-10-31T06:57:35.247Z"
+                },
+                {
+                  "id": "8s6pn9rvof3l",
+                  "name": "Cache Purging Delays Affecting Requests Routed Through EEUR",
+                  "status": "resolved",
+                  "updated_at": "2026-10-27T16:14:34.056Z"
+                }
+              ],
+              "matching_incidents_in_last_50": 3,
+              "note": "Chỉ tìm theo chuỗi trong 50 incident gần nhất; không tìm thấy không chứng minh không có sự cố.",
+              "source": "https://www.cloudflarestatus.com"
+            }
+          },
+          {
+            "event": "model",
+            "step": 2,
+            "finish": "tool_calls"
+          },
+          {
+            "event": "tool",
+            "step": 2,
+            "name": "get_incident_details",
+            "arguments": {
+              "provider": "cloudflare",
+              "incident_id": "wp49bp8bqo6c"
+            },
+            "result": {
+              "ok": true,
+              "provider": "cloudflare",
+              "captured_at": "2026-11-09T03:50:47.638054+00:00",
+              "id": "wp49bp8bqo6c",
+              "name": "Fedramp Customers have Delayed Purges",
+              "status": "identified",
+              "created_at": "2026-11-06T17:47:15.545Z",
+              "updated_at": "2026-11-06T17:59:13.680Z",
+              "components": [
+                "CDN Cache Purge"
+              ],
+              "updates": [
+                {
+                  "status": "identified",
+                  "created_at": "2026-11-06T17:59:13.680Z",
+                  "body": "We are continuing to work on a fix for the issue.",
+                  "truncated": false
+                },
+                {
+                  "status": "investigating",
+                  "created_at": "2026-11-06T17:47:15.545Z",
+                  "body": "Cloudflare has identified a bug with our purge pipeline impacting fedramp customers. Stale content may be served until expired. Non-fedramp customers are not impacted. ",
+                  "truncated": false
+                }
+              ],
+              "updates_total": 2,
+              "url": "https://www.cloudflarestatus.com/incidents/wp49bp8bqo6c"
+            }
+          },
+          {
+            "event": "model",
+            "step": 3,
+            "finish": "stop"
+          }
+        ],
+        "usage": [
+          {
+            "prompt_tokens": 1068,
+            "completion_tokens": 554,
+            "total_tokens": 1622,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 518,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          {
+            "prompt_tokens": 1732,
+            "completion_tokens": 491,
+            "total_tokens": 2223,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 5,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 436,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          {
+            "prompt_tokens": 2855,
+            "completion_tokens": 1514,
+            "total_tokens": 4369,
+            "cost": 0,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 676,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          }
+        ]
+      },
+      "grade": {
+        "score": 95,
+        "raw_judge_score": 95,
+        "dimensions": {
+          "factuality": 38,
+          "completeness": 22,
+          "evidence": 20,
+          "boundaries": 15
+        },
+        "status": "scored",
+        "reason": "Câu trả lời xác định chính xác incident wp49bp8bqo6c và trích dẫn trực tiếp cập nhật tuyên bố không phải khách hàng FedRAMP bị ảnh hưởng, không khẳng định nguyên nhân lỗi website. Thông tin bổ sung về tình trạng CDN cache purge và các incident khác là chính xác nhưng không cần thiết.",
+        "improvement": "Tóm tắt ngắn gọn hơn: chỉ cần chỉ rõ incident và tuyên bố không bị ảnh hưởng. Loại bỏ các phần phụ (tổng quan, các incident khác, giới hạn dữ liệu) để tập trung hoàn toàn vào yêu cầu của người dùng.",
+        "mechanical": {
+          "violations": [],
+          "score_cap": 100,
+          "tool_calls": 2,
+          "tool_steps": 2
+        },
+        "judge_usage": {
+          "prompt_tokens": 1899,
+          "completion_tokens": 457,
+          "total_tokens": 2356,
+          "cost": 0,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0,
+            "upstream_inference_prompt_cost": 0,
+            "upstream_inference_completions_cost": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 363,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "judge_trace_truncated": false
+      }
+    }
+  ]
+}

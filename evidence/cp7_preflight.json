@@ -1,0 +1,27 @@
+{
+  "tests_passed": true,
+  "test_result": "37 tests passed",
+  "config_equal": true,
+  "before_summary": {
+    "total_cases": 22,
+    "scored_cases": 22,
+    "unscored_cases": 0,
+    "score_0_100": 93.41,
+    "partial_mean_0_100": null
+  },
+  "after_summary": {
+    "total_cases": 22,
+    "scored_cases": 22,
+    "unscored_cases": 0,
+    "score_0_100": 94.82,
+    "partial_mean_0_100": null
+  },
+  "tracked_env_paths": [],
+  "credential_pattern_findings_paths_only": [],
+  "credential_scan_scope": "Required files and files directly in evidence; pattern scan is not exhaustive",
+  "repo_name_needs_review": true,
+  "required_name_pattern": "K5-L3A-DAY04-[HoVaTen]-[MSSV]-ReactLoopAgent OR K5-L3B-DAY04-[HoVaTen]-[MSSV]-ReactLoopAgent",
+  "push_verified": false,
+  "public_access_verified": false,
+  "lms_submitted_verified": false
+}

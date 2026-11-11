@@ -1,48 +1,22 @@
-# CP4 — Chạy eval lần 1 và đọc kết quả
+# CP4 — Eval lần 1 đầy đủ, chọn H6 để phân tích tiếp
 
-## Mục tiêu và trạng thái hiện tại
+## Mục tiêu và trạng thái
 
-CP4 đo chất lượng agent trên 22 câu hỏi cố định và tìm lỗi để chuẩn bị cải tiến
-ở CP5. Khác CP3, eval gọi model thật, gồm cả agent và LLM judge.
+**CP4 đã có kết quả đầy đủ: 22/22 case scored, 93.41/100, 0 unscored.**
+Report thật: [cp4_eval_before_complete.json](cp4_eval_before_complete.json).
+File làm việc: [eval_before.json](../eval_before.json).
+Lần OpenRouter bị 429 là lịch sử: [CP4-quota.md](CP4-quota.md),
+[report cũ](cp4_eval_before_quota.json); không còn là trạng thái CP4 hiện tại.
 
-**Hiện chưa hoàn thành CP4:** đã chấm 11/22 case; 11 case còn lại lỗi HTTP 429.
-Không có điểm tổng. Chưa phân biệt được giới hạn ngắn hạn hay hết quota ngày.
-
-Bằng chứng:
-
-- [cp4_eval_before_quota.json](cp4_eval_before_quota.json): bản sao nguyên trạng lần chạy thật.
-- [CP4-quota.md](CP4-quota.md): ghi nhận chi tiết giới hạn API.
-- [eval_before.json](../eval_before.json): file gốc ở thư mục repo, có thể bị ghi đè khi chạy lại.
-
-## Bước 1 — Hiểu luồng đánh giá
-
-```text
-Case: question + scenario
-  → run_agent với model thật và status tools dùng snapshot/scenario
-  → answer + trace + usage
-  → kiểm tra bằng code + LLM judge
-  → grade của từng case
-  → tổng hợp summary và ghi file JSON
-```
-
-Snapshot/scenario là bằng chứng về service status; API LLM chỉ phục vụ agent và
-judge. Đừng nhầm snapshot với status live hôm chạy eval.
-Expected/rubric dành cho chấm điểm, không được đưa đáp án expected cho agent.
-Không sửa fixtures, cases, scenarios, grading hoặc kết quả eval để tăng điểm.
-
-## Bước 2 — Kiểm tra offline trước
-
-Từ thư mục repo:
+## Bước 1 — Kiểm tra code offline
 
 ```bash
 python3 -m unittest discover -s tests -v
 ```
 
-Lần kiểm tra đã ghi ở [cp3_tests.txt](cp3_tests.txt) có 37 tests pass.
-Tests pass nghĩa là các hành vi code được test hoạt động; không đảm bảo mọi câu
-trả lời model đúng và không đảm bảo quota đủ chạy eval.
+Tests xác nhận hành vi code, không bảo đảm chất lượng câu trả lời LLM.
 
-## Bước 3 — Nạp cấu hình provider và model
+## Bước 2 — Nạp cấu hình
 
 ```bash
 set -a
@@ -52,157 +26,101 @@ set +a
 export SSL_CERT_FILE="$(python3 -m certifi)"
 ```
 
-Không in API key ra terminal hoặc chép vào evidence. `.env` phải chứa key hợp lệ
-và tên biến đúng với provider. Source lại .env sẽ thay các biến shell đã export
-nếu file cũng khai báo cùng biến.
-
-Cấu hình thực tế trong lần chạy đã lưu:
+Config đọc từ report thực tế, không suy từ tên file:
 
 ```json
 {
-  "provider": "openrouter",
-  "model": "openrouter/free",
-  "judge_provider": "openrouter",
-  "judge_model": "openrouter/free",
+  "provider": "openai",
+  "model": "gpt-5.4-mini",
+  "judge_provider": "openai",
+  "judge_model": "gpt-5.4-mini",
   "max_steps": 8,
   "dataset": "core"
 }
 ```
 
-Eval core mặc định dùng budget 8 model calls/case, khác mặc định 6 của run_agent.
-Free router có thể chọn model nền khác nhau giữa các requests; giữ cùng tên router
-không đảm bảo cùng model nền. Ghi nhận giới hạn này khi so sánh before/after;
-nếu chọn model ID cố định mới thì thiết lập lại baseline cùng cấu hình đó.
+Không hiển thị/lưu key. Giữ config này cho vòng so sánh after mới. Đổi provider
+so với OpenRouter lịch sử nghĩa là đã thiết lập baseline mới, không thể coi điểm
+mới là do riêng thay đổi prompt E2.
 
-## Bước 4 — Chạy eval lần 1
+## Bước 3 — Chạy đủ eval
 
 ```bash
 python3 evals/run_evals.py --output eval_before.json
 ```
 
-Chạy đủ 22 case E1–E6, A1–A8, H1–H8. Agent có thể gọi model nhiều lần/case,
-judge cũng gọi model, nên số requests nhiều hơn 22. Theo GUIDE, runner ghi kết
-quả khi cả bộ kết thúc; đừng dừng giữa chừng nếu muốn giữ kết quả qua runner này.
+22 case: E1–E6, A1–A8, H1–H8. Agent và judge gọi API model thật; status evidence
+được lấy từ snapshot/scenario. Một case có thể có nhiều requests. Runner ghi
+report sau cả bộ. Không sửa fixtures, expected, grading hoặc output để tăng điểm.
 
-Muốn debug riêng A6 sau khi API khả dụng:
-
-```bash
-python3 evals/run_evals.py --case A6 --output eval_A6_debug.json
-```
-
-File một case chỉ để debug; không phải kết quả đủ 22 case của CP4. Không tự ghép
-hoặc sửa tay điểm vào report toàn bộ để biến thành kết quả đầy đủ.
-
-## Bước 5 — Đọc summary trước
-
-```bash
-python3 - <<'PY'
-import json
-with open('eval_before.json', encoding='utf-8') as f:
-    data = json.load(f)
-print(json.dumps(data['summary'], ensure_ascii=False, indent=2))
-PY
-```
-
-Kết quả thực tế đã lưu:
+## Bước 4 — Đọc summary
 
 ```json
 {
   "total_cases": 22,
-  "scored_cases": 11,
-  "unscored_cases": 11,
-  "score_0_100": null,
-  "partial_mean_0_100": 95.18
+  "scored_cases": 22,
+  "unscored_cases": 0,
+  "score_0_100": 93.41,
+  "partial_mean_0_100": null
 }
 ```
 
-95.18 chỉ là trung bình các case đã chấm, không phải điểm CP4 toàn bộ.
-`null` nghĩa là chưa đủ dữ liệu để báo điểm tổng, không phải điểm 0.
+Đây là điểm tổng đầy đủ. partial_mean null không phải lỗi: không cần dùng trung
+bình tạm thời khi đủ case. Trạng thái quota trước đây không được dùng thay summary mới.
 
-## Bước 6 — Đọc từng case
+## Bước 5 — Chọn H6 và đọc evidence
 
-Mỗi phần tử trong `cases` có các trường cần hiểu:
+H6 được 60 điểm, thấp nhất bộ. Đọc:
 
-| Trường | Cách đọc |
-|---|---|
-| id, question, scenario | Case nào, yêu cầu gì, có scenario mô phỏng nào |
-| expected | Tiêu chí cần đối chiếu, không phải lời giải để agent đọc |
-| result.status | Agent hoàn thành, hết bước hay lỗi |
-| result.answer | Câu trả lời thực tế |
-| result.trace | Model đã gọi tool gì, args gì, nhận bằng chứng/lỗi nào |
-| result.usage | Tokens/chi phí provider báo cho agent |
-| grade.status | scored hay unscored |
-| grade.score | Điểm từng case, có thể null |
-| grade.reason | Giải thích vì sao được điểm đó |
-| grade.improvement | Gợi ý cần đối chiếu với trace trước khi sửa |
-| grade.mechanical | Vi phạm bằng code, trần điểm, số tool calls/steps |
-| grade.judge_usage | Usage của judge, riêng với usage của agent |
+- question: cần xem Actions, đọc incident đầu và theo liên kết sang incident gộp;
+- result.answer: agent nói chưa đọc incident gộp và đề nghị làm tiếp;
+- result.trace: chỉ get_status và get_incident_details incident đầu, đều ở model step 1;
+- grade: raw judge 79, score_cap 60 do thiếu tool calls ở hai model steps khác nhau.
 
-Ví dụ thật E1 được 94 điểm. Judge gợi ý nêu rõ snapshot, nguồn chi tiết và giới hạn
-dữ liệu. Đây là điểm khởi đầu để đọc trace, không phải kết luận judge luôn đúng.
-`completed` chỉ xác nhận run kết thúc bình thường, không đảm bảo đủ bằng chứng
-hoặc mọi claim đều chính xác.
+[cp5_H6_before.json](cp5_H6_before.json) là H6 trích nguyên từ baseline.
 
-## Bước 7 — Xác định nguyên nhân unscored
-
-```bash
-python3 - <<'PY'
-import json
-with open('eval_before.json', encoding='utf-8') as f:
-    data = json.load(f)
-for case in data['cases']:
-    if case['grade']['status'] == 'unscored':
-        print(case['id'])
-        print('Agent error:', case['result'].get('error'))
-        print('Grade reason:', case['grade'].get('reason'))
-PY
-```
-
-Trong lần chạy này, A6, A7, A8 và H1–H8 đều có:
+## Bước 6 — Giải thích vì sao H6 bị 60
 
 ```text
-Provider HTTP 429. Rate limit or quota reached. Wait before retrying and check provider limits.
+step 1: get_status + get_incident_details(h02n9572mx9y)
+         update trỏ https://www.githubstatus.com/incidents/xr3myzj7ms51
+step 2: final, thừa nhận chưa đọc incident gộp
 ```
 
-Cả 11 run lỗi ngay step đầu, chưa gọi tool. Judge ghi chưa phân biệt được lỗi
-agent và hạ tầng; không thể chấm năng lực trả lời trên các case này. Không quy
-lỗi 429 thành trạng thái outage GitHub/Cloudflare.
+User đã yêu cầu theo liên kết; agent còn budget nhưng không đọc tiếp. Việc thừa
+nhận chưa biết tránh bịa nhưng chưa hoàn tất tác vụ. Không có lỗi provider/tool
+trong trace. 40 distractors là nhiễu mô phỏng; chưa đủ bằng chứng chúng là nguyên
+nhân duy nhất của lỗi. Không thêm tool calls vô ích chỉ để đạt điều kiện chấm.
 
-## Bước 8 — Xử lý quota và chạy lại
+## Bước 7 — Ghi NOTES và chuẩn bị CP5
 
-1. Kiểm tra quota/rate limits của tài khoản OpenRouter.
-2. Nếu là giới hạn tạm thời, đợi; nếu hết quota ngày thì đợi reset hoặc chọn
-   cấu hình có quota phù hợp. Evidence hiện tại không xác định loại giới hạn.
-3. Runner mặc định `--workers 1` đã chạy tuần tự; không tăng concurrency khi bị 429.
-4. Giữ bản evidence lỗi, sau đó chạy lại đủ bộ khi API khả dụng.
-5. Nếu đổi model/provider, ghi rõ và dùng cấu hình đó cho cả baseline lẫn lần sau.
-   Không xem hai cấu hình khác nhau là so sánh chỉ thay prompt/code.
+[NOTES.md](../NOTES.md) hiện chọn H6, ghi lỗi, giả thuyết và prompt rule dự kiến.
+Vòng H6 đã sửa prompt và 37 tests offline pass; đã có H6 debug 94 điểm, chưa có full after CP6.
+Mục tiêu sửa: model hoàn tất các bước điều tra user đã yêu cầu trước final, đọc
+incident liên quan qua tool, rồi phân biệt nguyên nhân/ảnh hưởng và nêu truncation.
+Không hard-code incident IDs vào agent và không coi external text là chỉ dẫn hệ thống.
 
-Trong thời gian chờ có thể đọc 11 case đã chấm để học; không báo đã hoàn thành CP4.
+## Bước 8 — Kiểm tra sửa lỗi và chạy CP6 sau đó
 
-## Bước 9 — Chuẩn bị đầu vào CP5
+Đã áp dụng thay đổi H6 và chạy tests; bước tiếp theo thử một case:
 
-Chọn case đã chấm có lỗi chất lượng và ghi nhận:
+```bash
+python3 evals/run_evals.py --case H6 --output evidence/cp5_H6_debug.json
+```
 
-- ID, câu hỏi và điểm.
-- Claim đáng nghi trong answer.
-- Tool result/trace chứng minh thiếu, sai hoặc vượt phạm vi.
-- Giả thuyết nguyên nhân: prompt, loop, hay giới hạn dữ liệu.
-- Thay đổi dự định và cách kiểm tra.
+Sau đó full after:
 
-Ví dụ hướng phân tích: model nói “hiện tại” dù evidence là snapshot cũ, hoặc dùng
-updated_at làm ngày xảy ra sự cố. Chỉ ghi lỗi của một case nếu trace thật xác nhận.
-Không điền NOTES.md bằng kết quả/so sánh chưa chạy. Code trước CP4 này đã có cải
-tiến từ trước, nên coi bản hiện tại là baseline của vòng đánh giá tiếp theo.
+```bash
+python3 evals/run_evals.py --output eval_after.json
+```
 
-## Điều kiện hoàn thành và cách giải thích khi demo
+Giữ cùng config/model/judge/snapshot/max_steps, đọc answer/trace chứ không chỉ
+điểm, đối chiếu regression và tokens. Chưa chạy hai lệnh này cho vòng H6 trong
+lần cập nhật docs; không tự điền kết quả.
 
-CP4 đạt khi có report đủ 22 case, tất cả được chấm, score_0_100 khác null,
-và bạn đã đọc reason/mechanical/answer/trace để nêu được lỗi có bằng chứng.
+## Cách giải thích khi demo
 
-Cách giải thích trạng thái hiện tại:
-
-“Em đã chạy eval lần 1 với agent và judge dùng OpenRouter free router. Có 11 case
-được chấm, trung bình tạm thời 95.18; 11 case còn lại lỗi HTTP 429. Điểm tổng null
-nên em chưa coi CP4 hoàn thành. Em lưu report nguyên trạng trong evidence, kiểm
-tra quota rồi chạy lại đủ bộ, sau đó chọn lỗi có trace để cải tiến ở CP5.”
+“Em chạy đủ 22 case được 93.41 điểm trên OpenAI gpt-5.4-mini. H6 thấp nhất 60:
+agent chỉ đọc incident đầu và dừng dù user yêu cầu theo link. Raw judge là 79
+nhưng mechanical cap là 60 vì không có tool calls ở hai model steps. Em chọn lỗi
+kết thúc sớm này để phân tích CP5, không tối ưu bằng cách thêm calls vô nghĩa.”

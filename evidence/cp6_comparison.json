@@ -1,0 +1,178 @@
+{
+  "scope": "Full core dataset, 22 cases each",
+  "config_equal": true,
+  "config": {
+    "provider": "openai",
+    "model": "gpt-5.4-mini",
+    "judge_provider": "openai",
+    "judge_model": "gpt-5.4-mini",
+    "max_steps": 8,
+    "dataset": "core"
+  },
+  "before_summary": {
+    "total_cases": 22,
+    "scored_cases": 22,
+    "unscored_cases": 0,
+    "score_0_100": 93.41,
+    "partial_mean_0_100": null
+  },
+  "after_summary": {
+    "total_cases": 22,
+    "scored_cases": 22,
+    "unscored_cases": 0,
+    "score_0_100": 94.82,
+    "partial_mean_0_100": null
+  },
+  "before_metrics": {
+    "model_calls": 59,
+    "tool_calls": 60,
+    "agent_tokens": 88811,
+    "judge_tokens": 46225
+  },
+  "after_metrics": {
+    "model_calls": 59,
+    "tool_calls": 47,
+    "agent_tokens": 88929,
+    "judge_tokens": 40650
+  },
+  "case_scores": [
+    {
+      "id": "E1",
+      "before": 94,
+      "after": 92,
+      "delta": -2
+    },
+    {
+      "id": "E2",
+      "before": 98,
+      "after": 97,
+      "delta": -1
+    },
+    {
+      "id": "E3",
+      "before": 100,
+      "after": 100,
+      "delta": 0
+    },
+    {
+      "id": "E4",
+      "before": 96,
+      "after": 100,
+      "delta": 4
+    },
+    {
+      "id": "E5",
+      "before": 95,
+      "after": 99,
+      "delta": 4
+    },
+    {
+      "id": "E6",
+      "before": 100,
+      "after": 95,
+      "delta": -5
+    },
+    {
+      "id": "A1",
+      "before": 94,
+      "after": 97,
+      "delta": 3
+    },
+    {
+      "id": "A2",
+      "before": 95,
+      "after": 96,
+      "delta": 1
+    },
+    {
+      "id": "A3",
+      "before": 98,
+      "after": 96,
+      "delta": -2
+    },
+    {
+      "id": "A4",
+      "before": 100,
+      "after": 98,
+      "delta": -2
+    },
+    {
+      "id": "A5",
+      "before": 98,
+      "after": 86,
+      "delta": -12
+    },
+    {
+      "id": "A6",
+      "before": 81,
+      "after": 90,
+      "delta": 9
+    },
+    {
+      "id": "A7",
+      "before": 95,
+      "after": 96,
+      "delta": 1
+    },
+    {
+      "id": "A8",
+      "before": 95,
+      "after": 98,
+      "delta": 3
+    },
+    {
+      "id": "H1",
+      "before": 87,
+      "after": 95,
+      "delta": 8
+    },
+    {
+      "id": "H2",
+      "before": 100,
+      "after": 100,
+      "delta": 0
+    },
+    {
+      "id": "H3",
+      "before": 90,
+      "after": 95,
+      "delta": 5
+    },
+    {
+      "id": "H4",
+      "before": 100,
+      "after": 100,
+      "delta": 0
+    },
+    {
+      "id": "H5",
+      "before": 99,
+      "after": 95,
+      "delta": -4
+    },
+    {
+      "id": "H6",
+      "before": 60,
+      "after": 99,
+      "delta": 39
+    },
+    {
+      "id": "H7",
+      "before": 84,
+      "after": 64,
+      "delta": -20
+    },
+    {
+      "id": "H8",
+      "before": 96,
+      "after": 98,
+      "delta": 2
+    }
+  ],
+  "limits": [
+    "One run per version",
+    "Same model also judges",
+    "Model variability may affect scores",
+    "No cost field in usage: do not infer zero cost"
+  ]
+}

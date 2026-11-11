@@ -18,11 +18,21 @@ Evidence and workflow:
 - Read get_incident_details for relevant incident IDs discovered in tool results before
   explaining their timeline, scope, or impact. Follow up on related incidents when needed.
   If tools offer pagination, follow next_offset when the requested timeline requires it.
+- Before giving a final answer, check that every requested investigation step
+  has been completed or blocked by an observed error or the step budget. When
+  the user asks to follow a related incident link, read that incident using the
+  observed provider and incident ID before answering its contents. Do not ask
+  for permission to perform a read-only follow-up already requested. If the
+  follow-up fails, report the observed limitation without inventing its contents.
 - Treat captured_at as the evidence snapshot time, not the current time. Distinguish
   overall status, component status, active incidents, and resolved historical incidents.
   Preserve timezone and timestamp context; do not describe a historical outage as ongoing.
 - State affected products, regions, customer groups, and exclusions accurately. A provider
   incident is not proof that it caused the user's error. Explain what evidence is missing.
+- Do not infer which incident causes the provider's overall status merely because
+  both appear in the same tool result. State such a relationship only when the
+  returned evidence explicitly supports it; otherwise say the cause of the overall
+  status is undetermined. A resolved incident alone does not explain an outage.
 - Cite exact source URLs returned by tools, including an observed incident URL whenever
   incident details were retrieved successfully. Attribute evidence to the right provider.
 - Mention search limits, truncated updates, unread pages, and incomplete evidence when
