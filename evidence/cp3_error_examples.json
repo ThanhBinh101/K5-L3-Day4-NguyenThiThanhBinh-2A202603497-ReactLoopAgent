@@ -1,0 +1,259 @@
+{
+  "evidence_type": "OFFLINE simulations using FakeProvider and real snapshot tools, not live provider failures",
+  "cases": {
+    "invalid_json": {
+      "status": "completed",
+      "answer": "The preceding error is an observation, not proof of an outage.",
+      "trace": [
+        {
+          "event": "model",
+          "step": 1,
+          "finish": "tool_calls"
+        },
+        {
+          "event": "tool",
+          "step": 1,
+          "name": "get_status",
+          "arguments": "{",
+          "result": {
+            "ok": false,
+            "error": "INVALID_ARGUMENTS",
+            "message": "Provide arguments as a valid JSON object using the tool schema."
+          }
+        },
+        {
+          "event": "model",
+          "step": 2,
+          "finish": "stop"
+        }
+      ],
+      "usage": [
+        {},
+        {}
+      ]
+    },
+    "non_object_json": {
+      "status": "completed",
+      "answer": "The preceding error is an observation, not proof of an outage.",
+      "trace": [
+        {
+          "event": "model",
+          "step": 1,
+          "finish": "tool_calls"
+        },
+        {
+          "event": "tool",
+          "step": 1,
+          "name": "get_status",
+          "arguments": "[]",
+          "result": {
+            "ok": false,
+            "error": "INVALID_ARGUMENTS",
+            "message": "Provide arguments as a valid JSON object using the tool schema."
+          }
+        },
+        {
+          "event": "model",
+          "step": 2,
+          "finish": "stop"
+        }
+      ],
+      "usage": [
+        {},
+        {}
+      ]
+    },
+    "unknown_tool": {
+      "status": "completed",
+      "answer": "The preceding error is an observation, not proof of an outage.",
+      "trace": [
+        {
+          "event": "model",
+          "step": 1,
+          "finish": "tool_calls"
+        },
+        {
+          "event": "tool",
+          "step": 1,
+          "name": "missing",
+          "arguments": {},
+          "result": {
+            "ok": false,
+            "error": "UNKNOWN_TOOL",
+            "message": "Tool không tồn tại: missing"
+          }
+        },
+        {
+          "event": "model",
+          "step": 2,
+          "finish": "stop"
+        }
+      ],
+      "usage": [
+        {},
+        {}
+      ]
+    },
+    "invalid_provider": {
+      "status": "completed",
+      "answer": "The preceding error is an observation, not proof of an outage.",
+      "trace": [
+        {
+          "event": "model",
+          "step": 1,
+          "finish": "tool_calls"
+        },
+        {
+          "event": "tool",
+          "step": 1,
+          "name": "get_status",
+          "arguments": {
+            "provider": "invalid"
+          },
+          "result": {
+            "ok": false,
+            "error": "ValueError",
+            "message": "provider phải là github hoặc cloudflare"
+          }
+        },
+        {
+          "event": "model",
+          "step": 2,
+          "finish": "stop"
+        }
+      ],
+      "usage": [
+        {},
+        {}
+      ]
+    },
+    "timeout": {
+      "status": "completed",
+      "answer": "Status data unavailable; cannot determine service health.",
+      "trace": [
+        {
+          "event": "model",
+          "step": 1,
+          "finish": "tool_calls"
+        },
+        {
+          "event": "tool",
+          "step": 1,
+          "name": "get_status",
+          "arguments": {
+            "provider": "github"
+          },
+          "result": {
+            "ok": false,
+            "error": "TimeoutError",
+            "message": "Không thể lấy dữ liệu status (timeout giả lập)."
+          }
+        },
+        {
+          "event": "model",
+          "step": 2,
+          "finish": "stop"
+        }
+      ],
+      "usage": [
+        {},
+        {}
+      ]
+    },
+    "max_steps": {
+      "status": "max_steps",
+      "answer": "Investigation stopped at the model-call limit; no validated final answer is available.",
+      "trace": [
+        {
+          "event": "model",
+          "step": 1,
+          "finish": "tool_calls"
+        },
+        {
+          "event": "tool",
+          "step": 1,
+          "name": "get_status",
+          "arguments": {
+            "provider": "github"
+          },
+          "result": {
+            "provider": "github",
+            "captured_at": "2026-11-09T03:50:47.065020+00:00",
+            "overall": {
+              "indicator": "none",
+              "description": "All Systems Operational"
+            },
+            "components": [],
+            "incidents": [
+              {
+                "id": "pyynvrm1vskw",
+                "name": "Increase in timeouts for some unauthenticated users",
+                "status": "resolved",
+                "updated_at": "2026-11-08T12:32:35.646Z"
+              },
+              {
+                "id": "pfbmpxxfq1cy",
+                "name": "Degraded performance for multiple GitHub services",
+                "status": "resolved",
+                "updated_at": "2026-11-06T00:20:49.369Z"
+              },
+              {
+                "id": "t89g2q1800fr",
+                "name": "Incident with Actions",
+                "status": "resolved",
+                "updated_at": "2026-11-05T17:42:35.455Z"
+              },
+              {
+                "id": "h02n9572mx9y",
+                "name": "Incident with Actions",
+                "status": "resolved",
+                "updated_at": "2026-11-07T01:10:18.506Z"
+              },
+              {
+                "id": "xr3myzj7ms51",
+                "name": "Incident with Actions and Pages",
+                "status": "resolved",
+                "updated_at": "2026-11-07T01:04:38.647Z"
+              }
+            ],
+            "matching_incidents_in_last_50": 50,
+            "note": "Chỉ tìm theo chuỗi trong 50 incident gần nhất; không tìm thấy không chứng minh không có sự cố.",
+            "source": "https://www.githubstatus.com"
+          }
+        }
+      ],
+      "usage": [
+        {}
+      ]
+    },
+    "truncated_output": {
+      "status": "error",
+      "answer": "",
+      "trace": [
+        {
+          "event": "model",
+          "step": 1,
+          "finish": "length"
+        }
+      ],
+      "usage": [
+        {}
+      ],
+      "error": "Model stopped without completing: length"
+    },
+    "provider_http_401": {
+      "status": "error",
+      "answer": "",
+      "trace": [
+        {
+          "event": "error",
+          "step": 1,
+          "error": "RuntimeError",
+          "message": "Provider HTTP 401. Authentication failed. Check the full API key for the selected provider."
+        }
+      ],
+      "usage": [],
+      "error": "Provider HTTP 401. Authentication failed. Check the full API key for the selected provider."
+    }
+  }
+}
