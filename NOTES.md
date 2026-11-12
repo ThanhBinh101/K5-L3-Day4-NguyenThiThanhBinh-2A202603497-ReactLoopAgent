@@ -187,3 +187,14 @@ Mọi thay đổi mới cần baseline/after riêng; không ghi đè hoặc ch�
 - Full after tăng tổng 93.41→94.82 và H6 60→99, nhưng H7/A5 giảm. Một lần
   chạy không chứng minh cải thiện ổn định; không quy mọi thay đổi điểm cho prompt.
 - Không ghi credentials vào notes/evidence; không chỉnh fixtures/scenarios/rubric để tăng điểm.
+
+## 6. Bonus (bổ sung)
+
+Đã chạy đủ 10/10 case, 0 unscored: **90.5/100**, bonus tham khảo **13.57/15**.
+Agent/judge openai/gpt-5.4-mini, max_steps 16; xem [BONUS](evidence/BONUS.md)
+và [report nguyên trạng](evidence/eval_bonus_complete.json). Không tự cộng vào điểm core.
+
+B4 (50) có lỗi retry: Vercel bị RATE_LIMITED 4 lần, vượt tối đa 3.
+B10 (79): judge nêu vấn đề retry/nguồn, nhưng trace có retry Vercel thành công
+ở step 2 sau RATE_LIMITED step 1; không kết luận agent chưa retry. Chưa sửa thêm code.
+Điểm là tham khảo, giảng viên có thể điều chỉnh; chưa xác nhận đã push/nộp LMS.

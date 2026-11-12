@@ -33,3 +33,6 @@ riêng, không phải trạng thái live ngày ghi tài liệu. Không chứa AP
 
 - [CP7.md](CP7.md): demo H6/H7, kiểm tra tên repo, commit/push và tự nộp LMS; chưa xác nhận hoàn tất nộp bài.
 - [cp7_preflight.json](cp7_preflight.json), [cp7_tests.txt](cp7_tests.txt): kiểm tra local mới, 37 tests pass.
+
+- [BONUS.md](BONUS.md): 10/10 case, 90.5/100, bonus tham khảo 13.57/15 và phân tích B4/B10.
+- [eval_bonus_complete.json](eval_bonus_complete.json): bản sao nguyên trạng report bonus.
